@@ -1,5 +1,9 @@
-organization := "com.github.cb372"
+organization := "com.ovoenergy"
+bintrayOrganization := Some("ovotech")
+
 scalaVersion := "2.12.3"
+crossScalaVersions := Seq("2.11.11", scalaVersion.value)
+releaseCrossBuild := true
 
 libraryDependencies ++= Seq(
   "is.cir" %% "ciris-core" % "0.4.0",

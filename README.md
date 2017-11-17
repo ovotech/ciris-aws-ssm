@@ -5,3 +5,9 @@
 This integration adds a config source that allows you to load parameters of type "string" or "secret string" from the SSM parameter store.
 
 See [this blog](https://medium.com/@mda590/simple-secrets-management-via-aws-ec2-parameter-store-737477e19450) for more information about using SSM's parameter store to manage secrets.
+
+## How to release
+
+```
+$ sbt release
+```

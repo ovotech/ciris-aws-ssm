@@ -8,5 +8,5 @@ releaseCrossBuild := true
 
 libraryDependencies ++= Seq(
   "is.cir" %% "ciris-core" % "0.5.0",
-  "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.182"
+  "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.275"
 )

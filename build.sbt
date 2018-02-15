@@ -7,6 +7,6 @@ crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 releaseCrossBuild := true
 
 libraryDependencies ++= Seq(
-  "is.cir" %% "ciris-core" % "0.5.0",
+  "is.cir" %% "ciris-core" % "0.7.2",
   "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.275"
 )

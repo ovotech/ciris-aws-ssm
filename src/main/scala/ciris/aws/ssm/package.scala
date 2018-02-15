@@ -1,10 +1,8 @@
 package ciris.aws
 
-import ciris.{ConfigKeyType, ConfigReader, ConfigSource, ConfigValue}
-import com.amazonaws.auth.{
-  AWSCredentialsProvider,
-  DefaultAWSCredentialsProviderChain
-}
+import ciris._
+import ciris.api._
+import com.amazonaws.auth._
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder
@@ -18,7 +16,8 @@ package object ssm {
 
   def awsSsmSource(
       region: Regions,
-      credsProvider: AWSCredentialsProvider): ConfigSource[String] =
+      credsProvider: AWSCredentialsProvider
+  ): ConfigSource[Id, String, String] =
     ConfigSource.fromTryOption(SecretString) { key =>
       val ssmClient = AWSSimpleSystemsManagementClientBuilder
         .standard()
@@ -45,9 +44,14 @@ package object ssm {
     *
     * If the parameter is a "secret string", it will be decrypted.
     */
-  def param[Value: ConfigReader](key: String)(
+  def param[Value](key: String)(
       implicit region: Regions = Regions.EU_WEST_1,
       credsProvider: AWSCredentialsProvider =
-        new DefaultAWSCredentialsProviderChain): ConfigValue[Value] =
-    ConfigValue(key)(awsSsmSource(region, credsProvider), ConfigReader[Value])
+        new DefaultAWSCredentialsProviderChain(),
+      decoder: ConfigDecoder[String, Value]
+  ): ConfigEntry[Id, String, String, Value] = {
+    awsSsmSource(region, credsProvider)
+      .read(key)
+      .decodeValue[Value]
+  }
 }

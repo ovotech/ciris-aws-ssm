@@ -54,4 +54,21 @@ package object ssm {
       .read(key)
       .decodeValue[Value]
   }
+
+  /**
+    * Reads the parameter with the specified name from AWS Simple Systems
+    * Management's parameter store, suspending the reading into `F`. If
+    * the parameter is a "secret string", it will be decrypted.
+    */
+  def paramF[F[_]: Sync, Value](key: String)(
+      implicit region: Regions = Regions.EU_WEST_1,
+      credsProvider: AWSCredentialsProvider =
+        new DefaultAWSCredentialsProviderChain(),
+      decoder: ConfigDecoder[String, Value]
+  ): ConfigEntry[F, String, String, Value] = {
+    awsSsmSource(region, credsProvider)
+      .suspendF[F]
+      .read(key)
+      .decodeValue[Value]
+  }
 }

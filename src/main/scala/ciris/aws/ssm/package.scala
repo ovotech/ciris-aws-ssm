@@ -40,9 +40,9 @@ package object ssm {
     }
 
   /**
-    * Read a parameter from AWS Simple Systems Management's parameter store.
-    *
-    * If the parameter is a "secret string", it will be decrypted.
+    * Reads the parameter with the specified key from AWS Simple Systems
+    * Management's parameter store. If the parameter is a "secret string",
+    * it will be decrypted.
     */
   def param[Value](key: String)(
       implicit region: Regions = Regions.EU_WEST_1,
@@ -56,7 +56,7 @@ package object ssm {
   }
 
   /**
-    * Reads the parameter with the specified name from AWS Simple Systems
+    * Reads the parameter with the specified key from AWS Simple Systems
     * Management's parameter store, suspending the reading into `F`. If
     * the parameter is a "secret string", it will be decrypted.
     */

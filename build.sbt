@@ -10,5 +10,5 @@ scalacOptions += "-language:higherKinds"
 
 libraryDependencies ++= Seq(
   "is.cir" %% "ciris-core" % "0.7.2",
-  "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.275"
+  "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.277"
 )

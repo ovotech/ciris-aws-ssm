@@ -2,7 +2,7 @@ organization := "com.ovoenergy"
 bintrayOrganization := Some("ovotech")
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.5"
 crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 releaseCrossBuild := true
 

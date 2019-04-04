@@ -12,13 +12,14 @@ class Example {
   implicit val region: Regions = Regions.EU_WEST_1
   implicit val credsProvider: AWSCredentialsProvider = new DefaultAWSCredentialsProviderChain
 
-  case class Config(username: String, password: String, port: Int)
+  case class Config(username: String, password: String, port: Int, alwaysNone: Option[String])
 
   val config = loadConfig(
     param[String]("password"),
-    param[Int]("port")
-  ) { (password, port) =>
-    Config(username = "Dave", password = password, port = port)
+    param[Int]("port"),
+    param[Option[String]]("an-absolutely-random-entry")
+  ) { (password, port, alwaysNone) =>
+    Config(username = "Dave", password = password, port = port, alwaysNone = alwaysNone)
   }
 
 }

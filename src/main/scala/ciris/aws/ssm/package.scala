@@ -4,10 +4,13 @@ import ciris._
 import ciris.api._
 import com.amazonaws.auth._
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest
+import com.amazonaws.services.simplesystemsmanagement.model.{
+  GetParameterRequest,
+  ParameterNotFoundException
+}
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder
 
-import scala.util.Try
+import scala.util.{Try, Success}
 
 package object ssm {
 
@@ -28,12 +31,16 @@ package object ssm {
         val request = new GetParameterRequest()
           .withName(key)
           .withWithDecryption(true)
-        Try(ssmClient.getParameter(request)).map { result =>
-          for {
-            param <- Option(result.getParameter)
-            value <- Option(param.getValue)
-          } yield value
-        }
+        Try(ssmClient.getParameter(request))
+          .map { result =>
+            for {
+              param <- Option(result.getParameter)
+              value <- Option(param.getValue)
+            } yield value
+          }
+          .recover {
+            case _: ParameterNotFoundException => None
+          }
       } finally {
         ssmClient.shutdown()
       }

@@ -2,13 +2,11 @@ organization := "com.ovoenergy"
 bintrayOrganization := Some("ovotech")
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
-scalaVersion := "2.12.8"
-crossScalaVersions := Seq("2.11.12", scalaVersion.value)
+scalaVersion := "2.13.1"
+crossScalaVersions := Seq(scalaVersion.value, "2.12.10")
 releaseCrossBuild := true
 
-scalacOptions += "-language:higherKinds"
-
 libraryDependencies ++= Seq(
-  "is.cir" %% "ciris-core" % "0.12.0",
-  "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.378"
+  "is.cir" %% "ciris" % "1.0.1",
+  "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.667"
 )

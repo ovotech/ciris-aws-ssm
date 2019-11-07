@@ -2,7 +2,7 @@
 
 [Amazon EC2 Systems Manager](https://aws.amazon.com/ec2/systems-manager/?nc2=h_m1) (also known as Simple Systems Manager or SSM) support for [Ciris](https://cir.is).
 
-Enables us to load parameters of type "string" or "secret string" from the SSM parameter store.
+Enables us to load parameters of type "string" or "secure string" from the SSM parameter store.
 
 See [this blog](https://medium.com/@mda590/simple-secrets-management-via-aws-ec2-parameter-store-737477e19450) for more information about using SSM's parameter store to manage secrets.
 

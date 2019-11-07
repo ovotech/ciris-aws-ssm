@@ -1,50 +1,29 @@
 package ciris.aws
 
-import cats.effect.Blocker
-import ciris._
+import cats.effect.{Blocker, Resource, Sync}
 import com.amazonaws.auth._
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.simplesystemsmanagement._
-import com.amazonaws.services.simplesystemsmanagement.model._
 
 package object ssm {
-  final def param(key: String, blocker: Blocker)(
-    implicit region: Regions = Regions.EU_WEST_1,
+  final def params[F[_]](blocker: Blocker)(
+    implicit F: Sync[F],
+    region: Regions = Regions.EU_WEST_1,
     credsProvider: AWSCredentialsProvider = new DefaultAWSCredentialsProviderChain()
-  ): ConfigValue[String] =
-    ConfigValue.blockOn(blocker) {
-      ConfigValue.suspend {
-        val ssmClient =
+  ): Resource[F, Param] =
+    Resource {
+      F.delay {
+        val client =
           AWSSimpleSystemsManagementClientBuilder
             .standard()
             .withRegion(region)
             .withCredentials(credsProvider)
             .build()
 
-        val configKey =
-          ConfigKey(s"parameter $key from AWS SSM")
+        val shutdown =
+          F.delay(client.shutdown())
 
-        try {
-          val result =
-            ssmClient.getParameter {
-              new GetParameterRequest()
-                .withWithDecryption(true)
-                .withName(key)
-            }
-
-          val loaded =
-            for {
-              parameter <- Option(result.getParameter)
-              value <- Option(parameter.getValue)
-            } yield ConfigValue.loaded(configKey, value)
-
-          loaded.getOrElse(ConfigValue.missing(configKey))
-        } catch {
-          case _: ParameterNotFoundException =>
-            ConfigValue.missing(configKey)
-        } finally {
-          ssmClient.shutdown()
-        }
+        (Param(client, blocker), shutdown)
       }
     }
 }

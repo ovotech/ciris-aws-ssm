@@ -45,12 +45,12 @@ final case class Config(
 
 object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
-    Blocker[IO].use { blocker =>
+    Blocker[IO].flatMap(params[IO]).use { param =>
       val config =
         (
-          param("password", blocker),
-          param("port", blocker).as[Int],
-          param("api-key", blocker).option
+          param("password"),
+          param("port").as[Int],
+          param("api-key").option
         ).parMapN { (password, port, apiKey) =>
           Config(
             username = "Dave",

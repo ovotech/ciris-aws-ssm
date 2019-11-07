@@ -40,7 +40,7 @@ final case class Config(
   username: String,
   password: String,
   port: Int,
-  alwaysNone: Option[String]
+  apiKey: Option[String]
 )
 
 object Main extends IOApp {
@@ -50,13 +50,13 @@ object Main extends IOApp {
         (
           param("password", blocker),
           param("port", blocker).as[Int],
-          param("random-entry", blocker).option
-        ).parMapN { (password, port, alwaysNone) =>
+          param("api-key", blocker).option
+        ).parMapN { (password, port, apiKey) =>
           Config(
             username = "Dave",
             password = password,
             port = port,
-            alwaysNone = alwaysNone
+            apiKey = apiKey
           )
         }
 

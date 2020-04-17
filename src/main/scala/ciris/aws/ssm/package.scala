@@ -8,7 +8,7 @@ import com.amazonaws.services.simplesystemsmanagement._
 package object ssm {
   final def params[F[_]](blocker: Blocker)(
     implicit F: Sync[F],
-    region: Regions = Regions.EU_WEST_1,
+    region: Regions = sys.env.get("AWS_REGION").map(Regions.fromName).getOrElse(Regions.EU_WEST_1),
     credsProvider: AWSCredentialsProvider = new DefaultAWSCredentialsProviderChain()
   ): Resource[F, Param] =
     Resource {

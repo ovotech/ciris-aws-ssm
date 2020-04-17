@@ -28,7 +28,8 @@ import ciris.aws.ssm._
 import com.amazonaws.auth._
 import com.amazonaws.regions.Regions
 
-// the region can be overridden using an implicit
+/* The region defaults to eu-west-1, unless overriden by "AWS_REGION" in the environment
+ * This can be overridden in code by setting AWS_REGION using an implicit */
 implicit val region: Regions =
   Regions.EU_WEST_1
 

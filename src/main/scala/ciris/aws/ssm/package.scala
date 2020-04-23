@@ -1,29 +1,38 @@
 package ciris.aws
 
-import cats.effect.{Blocker, Resource, Sync}
+import cats.effect.{Blocker, Effect, Resource}
+import ciris.ConfigValue
 import com.amazonaws.auth._
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.simplesystemsmanagement._
 
 package object ssm {
-  final def params[F[_]](blocker: Blocker)(
-    implicit F: Sync[F],
-    region: Regions = Regions.EU_WEST_1,
-    credsProvider: AWSCredentialsProvider = new DefaultAWSCredentialsProviderChain()
-  ): Resource[F, Param] =
-    Resource {
-      F.delay {
-        val client =
-          AWSSimpleSystemsManagementClientBuilder
-            .standard()
-            .withRegion(region)
-            .withCredentials(credsProvider)
-            .build()
+  def params[F[_]](
+    blocker: Blocker,
+    region: Region
+  )(implicit F: Effect[F]): ConfigValue[Param] =
+    params(blocker, region, new DefaultAWSCredentialsProviderChain())
 
-        val shutdown =
-          F.delay(client.shutdown())
+  def params[F[_]](
+    blocker: Blocker,
+    region: Region,
+    credsProvider: AWSCredentialsProvider
+  )(implicit F: Effect[F]): ConfigValue[Param] =
+    ConfigValue.resource {
+      Resource {
+        F.delay {
+          val client =
+            AWSSimpleSystemsManagementClientBuilder
+              .standard()
+              .withRegion(region.asJava)
+              .withCredentials(credsProvider)
+              .build()
 
-        (Param(client, blocker), shutdown)
+          val shutdown =
+            F.delay(client.shutdown())
+
+          (ConfigValue.default(Param(client, blocker)), shutdown)
+        }
       }
     }
 }

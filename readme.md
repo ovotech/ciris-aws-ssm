@@ -39,7 +39,7 @@ object Main extends IOApp {
       val config =
         for {
           region <- env("AWS_REGION").as[Region].default(Region.EU_WEST_1)
-          param <- params[IO](blocker, region)
+          param <- params(blocker, region)
           config <- (
               param("password"),
               param("port").as[Int],

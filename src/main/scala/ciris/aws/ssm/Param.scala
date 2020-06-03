@@ -1,7 +1,7 @@
 package ciris.aws.ssm
 
 import cats.effect.Blocker
-import ciris._
+import ciris.{ConfigKey, ConfigValue}
 import com.amazonaws.services.simplesystemsmanagement._
 import com.amazonaws.services.simplesystemsmanagement.model._
 

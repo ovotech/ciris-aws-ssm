@@ -25,16 +25,6 @@ import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import cats.implicits._
 import ciris._
 import ciris.aws.ssm._
-import com.amazonaws.auth._
-import com.amazonaws.regions.Regions
-
-// the region can be overridden using an implicit
-implicit val region: Regions =
-  Regions.EU_WEST_1
-
-// the credentials provider can be overridden using an implicit
-implicit val credsProvider: AWSCredentialsProvider =
-  new DefaultAWSCredentialsProviderChain
 
 final case class Config(
   username: String,
@@ -45,23 +35,27 @@ final case class Config(
 
 object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
-    Blocker[IO].flatMap(params[IO]).use { param =>
+    Blocker[IO].use { blocker =>
       val config =
-        (
-          param("password"),
-          param("port").as[Int],
-          param("api-key").option
-        ).parMapN { (password, port, apiKey) =>
-          Config(
-            username = "Dave",
-            password = password,
-            port = port,
-            apiKey = apiKey
-          )
-        }
+        for {
+          region <- env("AWS_REGION").as[Region].default(Region.EU_WEST_1)
+          param <- params(blocker, region)
+          config <- (
+              param("password"),
+              param("port").as[Int],
+              param("api-key").option
+            ).parMapN { (password, port, apiKey) =>
+              Config(
+                username = "Dave",
+                password = password,
+                port = port,
+                apiKey = apiKey
+              )
+            }
+        } yield config
 
-      config.load[IO]
-    }.as(ExitCode.Success)
+      config.load[IO].as(ExitCode.Success)
+    }
 }
 ```
 

@@ -2,15 +2,15 @@ package ciris.aws.ssm
 
 import cats.effect.Blocker
 import ciris.{ConfigKey, ConfigValue}
-import com.amazonaws.services.simplesystemsmanagement._
-import com.amazonaws.services.simplesystemsmanagement.model._
+import software.amazon.awssdk.services.ssm.SsmClient
+import software.amazon.awssdk.services.ssm.model.{GetParameterRequest, ParameterNotFoundException}
 
 sealed abstract class Param {
   def apply(key: String): ConfigValue[String]
 }
 
 private[ssm] final object Param {
-  final def apply(client: AWSSimpleSystemsManagement, blocker: Blocker): Param =
+  final def apply(client: SsmClient, blocker: Blocker): Param =
     new Param {
       override final def apply(key: String): ConfigValue[String] =
         ConfigValue.blockOn(blocker) {
@@ -21,15 +21,17 @@ private[ssm] final object Param {
             try {
               val result =
                 client.getParameter {
-                  new GetParameterRequest()
-                    .withWithDecryption(true)
-                    .withName(key)
+                  GetParameterRequest
+                    .builder()
+                    .withDecryption(true)
+                    .name(key)
+                    .build()
                 }
 
               val loaded =
                 for {
-                  parameter <- Option(result.getParameter)
-                  value <- Option(parameter.getValue)
+                  parameter <- Option(result.parameter())
+                  value <- Option(parameter.value)
                 } yield ConfigValue.loaded(configKey, value)
 
               loaded.getOrElse(ConfigValue.missing(configKey))

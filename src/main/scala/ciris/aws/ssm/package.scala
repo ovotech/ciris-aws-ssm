@@ -19,17 +19,18 @@ package object ssm {
     credentials: AwsCredentialsProvider
   ): ConfigValue[Param] =
     ConfigValue.resource {
-      Resource.fromAutoCloseable {
-        IO {
-          val client =
+      Resource
+      Resource
+        .fromAutoCloseable {
+          IO {
             SsmClient
               .builder()
               .region(region)
               .credentialsProvider(credentials)
               .build()
 
-          ConfigValue.default(Param(client, blocker))
+          }
         }
-      }
+        .map(client => ConfigValue.default(Param(client, blocker)))
     }
 }

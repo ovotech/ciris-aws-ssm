@@ -13,7 +13,7 @@ To get started with [sbt](https://www.scala-sbt.org), simply add the following l
 ```scala
 resolvers += Resolver.bintrayRepo("ovotech", "maven")
 
-libraryDependencies += "com.ovoenergy" %% "ciris-aws-ssm" % "1.0.0"
+libraryDependencies += "com.ovoenergy" %% "ciris-aws-ssm" % "LATEST_VERSION"
 ```
 
 The library is published for Scala 2.12 and 2.13.
@@ -25,6 +25,7 @@ import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import cats.implicits._
 import ciris._
 import ciris.aws.ssm._
+import software.amazon.awssdk.regions.Region
 
 final case class Config(
   username: String,
@@ -38,7 +39,7 @@ object Main extends IOApp {
     Blocker[IO].use { blocker =>
       val config =
         for {
-          region <- env("AWS_REGION").as[Region].default(Region.EU_WEST_1)
+          region <- env("AWS_REGION").map(Region.of).default(Region.EU_WEST_1)
           param <- params(blocker, region)
           config <- (
               param("password"),

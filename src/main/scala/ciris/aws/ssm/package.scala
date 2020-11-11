@@ -20,7 +20,6 @@ package object ssm {
   ): ConfigValue[Param] =
     ConfigValue.resource {
       Resource
-      Resource
         .fromAutoCloseable {
           IO {
             SsmClient

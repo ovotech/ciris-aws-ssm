@@ -62,8 +62,9 @@ object Main extends IOApp {
 
 ### Release
 
-To release a new version first tag the commit with the version, then use the following command.
+To release a new version use the following commands.
 
 ```
+$ ./tag.sh
 $ sbt +publish
 ```

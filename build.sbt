@@ -1,3 +1,7 @@
+import sbtrelease.ExtraReleaseCommands
+import sbtrelease.ReleaseStateTransformations._
+import sbtrelease.tagsonly.TagsOnly._
+
 organization := "com.ovoenergy"
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
@@ -10,3 +14,13 @@ libraryDependencies ++= Seq(
 )
 
 publishTo := Some("Kaluza artifactory maven public" at "https://kaluza.jfrog.io/artifactory/maven")
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  releaseStepCommand(ExtraReleaseCommands.initialVcsChecksCommand),
+  setVersionFromTags(releaseTagPrefix.value),
+  runClean,
+  tagRelease,
+  publishArtifacts,
+  pushTagsOnly
+)

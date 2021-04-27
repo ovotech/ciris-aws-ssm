@@ -1,2 +1,2 @@
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.2.1")
-addSbtPlugin("fr.qux" % "sbt-release-tags-only" % "0.5.0")
+addSbtPlugin("com.dwijnand" % "sbt-dynver" % "4.1.1")

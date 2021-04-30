@@ -11,7 +11,7 @@ See [this blog](https://medium.com/@mda590/simple-secrets-management-via-aws-ec2
 To get started with [sbt](https://www.scala-sbt.org), simply add the following lines to your `build.sbt` file.
 
 ```scala
-resolvers += Resolver.bintrayRepo("ovotech", "maven")
+resolvers += "Kaluza artifactory" at "https://kaluza.jfrog.io/artifactory/maven"
 
 libraryDependencies += "com.ovoenergy" %% "ciris-aws-ssm" % "LATEST_VERSION"
 ```

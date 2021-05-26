@@ -7,7 +7,7 @@ lazy val root = (project in file("."))
     scalaVersion := "2.13.1",
     crossScalaVersions := Seq(scalaVersion.value, "2.12.10"),
     libraryDependencies ++= Seq(
-      "is.cir" %% "ciris" % "1.2.1",
+      "is.cir" %% "ciris" % "2.0.0",
       "software.amazon.awssdk" % "ssm" % "2.16.48"
     ),
     scmInfo := Some(

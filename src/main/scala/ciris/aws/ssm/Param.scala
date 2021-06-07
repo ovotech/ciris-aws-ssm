@@ -1,19 +1,18 @@
 package ciris.aws.ssm
 
-import cats.effect.Blocker
 import ciris.{ConfigKey, ConfigValue}
 import software.amazon.awssdk.services.ssm.SsmClient
 import software.amazon.awssdk.services.ssm.model.{GetParameterRequest, ParameterNotFoundException}
 
-sealed abstract class Param {
-  def apply(key: String): ConfigValue[String]
+sealed abstract class Param[F[_]] {
+  def apply(key: String): ConfigValue[F, String]
 }
 
 private[ssm] final object Param {
-  final def apply(client: SsmClient, blocker: Blocker): Param =
-    new Param {
-      override final def apply(key: String): ConfigValue[String] =
-        ConfigValue.blockOn(blocker) {
+  final def apply[F[_]](client: SsmClient): Param[F] =
+    new Param[F] {
+      override final def apply(key: String): ConfigValue[F, String] =
+        ConfigValue.blocking {
           ConfigValue.suspend {
             val configKey =
               ConfigKey(s"parameter $key from AWS SSM")

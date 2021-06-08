@@ -1,27 +1,24 @@
 package ciris.aws
 
-import cats.effect.{Blocker, IO, Resource}
+import cats.effect.kernel.{Resource, Sync}
 import ciris.ConfigValue
 import software.amazon.awssdk.auth.credentials.{AwsCredentialsProvider, DefaultCredentialsProvider}
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.ssm.SsmClient
 
 package object ssm {
-  def params(
-    blocker: Blocker,
-    region: Region
-  ): ConfigValue[Param] =
-    params(blocker, region, DefaultCredentialsProvider.create())
+  def params[F[_]: Sync](region: Region
+  ): ConfigValue[F, Param[F]] =
+    params(region, DefaultCredentialsProvider.create())
 
-  def params(
-    blocker: Blocker,
+  def params[F[_]: Sync](
     region: Region,
     credentials: AwsCredentialsProvider
-  ): ConfigValue[Param] =
+  ): ConfigValue[F, Param[F]] =
     ConfigValue.resource {
       Resource
-        .fromAutoCloseable {
-          IO {
+        .fromAutoCloseable[F, SsmClient] {
+          Sync[F].delay {
             SsmClient
               .builder()
               .region(region)
@@ -30,6 +27,6 @@ package object ssm {
 
           }
         }
-        .map(client => ConfigValue.default(Param(client, blocker)))
+        .map(client => ConfigValue.default(Param[F](client)))
     }
 }

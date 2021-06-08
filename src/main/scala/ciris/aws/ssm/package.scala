@@ -18,7 +18,7 @@ package object ssm {
     ConfigValue.resource {
       Resource
         .fromAutoCloseable[F, SsmClient] {
-          Sync[F].pure {
+          Sync[F].delay {
             SsmClient
               .builder()
               .region(region)

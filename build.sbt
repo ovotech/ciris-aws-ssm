@@ -10,7 +10,6 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "is.cir" %% "ciris" % "2.0.1",
       "software.amazon.awssdk" % "ssm" % "2.16.78",
-      "org.typelevel" %% "cats-effect-kernel" % catsEffectVersion,
       "org.typelevel" %% "cats-effect"        % catsEffectVersion
     ),
     scmInfo := Some(

@@ -1,4 +1,4 @@
-val catsEffectVersion = "3.1.1"
+val catsEffectVersion = "3.2.3"
 lazy val root = (project in file("."))
   .settings(publishOptions)
   .settings(

@@ -5,12 +5,12 @@ lazy val root = (project in file("."))
     name := "ciris-aws-ssm",
     organization := "com.ovoenergy",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-    scalaVersion := "2.13.1",
+    scalaVersion := "2.13.7",
     crossScalaVersions := Seq(scalaVersion.value, "2.12.10"),
     libraryDependencies ++= Seq(
       "is.cir" %% "ciris" % "2.0.1",
       "software.amazon.awssdk" % "ssm" % "2.16.82",
-      "org.typelevel" %% "cats-effect"        % catsEffectVersion
+      "org.typelevel" %% "cats-effect" % catsEffectVersion
     ),
     scmInfo := Some(
       ScmInfo(

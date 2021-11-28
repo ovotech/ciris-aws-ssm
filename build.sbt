@@ -1,4 +1,4 @@
-val catsEffectVersion = "3.1.1"
+val catsEffectVersion = "3.3.0"
 lazy val root = (project in file("."))
   .settings(publishOptions)
   .settings(
@@ -10,7 +10,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "is.cir" %% "ciris" % "2.0.1",
       "software.amazon.awssdk" % "ssm" % "2.16.82",
-      "org.typelevel" %% "cats-effect"        % catsEffectVersion
+      "org.typelevel" %% "cats-effect" % catsEffectVersion
     ),
     scmInfo := Some(
       ScmInfo(

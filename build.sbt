@@ -1,14 +1,14 @@
-val catsEffectVersion = "3.1.1"
+val catsEffectVersion = "3.2.9"
 lazy val root = (project in file("."))
   .settings(publishOptions)
   .settings(
     name := "ciris-aws-ssm",
     organization := "com.ovoenergy",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-    scalaVersion := "2.13.1",
-    crossScalaVersions := Seq(scalaVersion.value, "2.12.10"),
+    scalaVersion := "3.1.0",
+    crossScalaVersions := Seq(scalaVersion.value, "2.13.1", "2.12.10"),
     libraryDependencies ++= Seq(
-      "is.cir" %% "ciris" % "2.0.1",
+      "is.cir" %% "ciris" % "2.2.1",
       "software.amazon.awssdk" % "ssm" % "2.16.82",
       "org.typelevel" %% "cats-effect"        % catsEffectVersion
     ),

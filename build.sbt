@@ -9,7 +9,7 @@ lazy val root = (project in file("."))
     crossScalaVersions := Seq(scalaVersion.value, "2.12.10"),
     libraryDependencies ++= Seq(
       "is.cir" %% "ciris" % "2.0.1",
-      "software.amazon.awssdk" % "ssm" % "2.16.104",
+      "software.amazon.awssdk" % "ssm" % "2.16.82",
       "org.typelevel" %% "cats-effect"        % catsEffectVersion
     ),
     scmInfo := Some(

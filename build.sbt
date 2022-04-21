@@ -6,7 +6,7 @@ lazy val root = (project in file("."))
     organization := "com.ovoenergy",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
     scalaVersion := "2.13.1",
-    crossScalaVersions := Seq(scalaVersion.value, "2.12.15"),
+    crossScalaVersions := Seq(scalaVersion.value, "2.12.10"),
     libraryDependencies ++= Seq(
       "is.cir" %% "ciris" % "2.0.1",
       "software.amazon.awssdk" % "ssm" % "2.16.82",

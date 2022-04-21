@@ -23,5 +23,11 @@ lazy val root = (project in file("."))
 lazy val publishOptions = Seq(
   publishTo := Some(
     "Kaluza artifactory maven public" at "https://kaluza.jfrog.io/artifactory/maven"
-  )
+  ),
+  credentials += {
+    for {
+      usr <- sys.env.get("ARTIFACTORY_USER")
+      password <- sys.env.get("ARTIFACTORY_PASS")
+    } yield Credentials("Artifactory Realm", "kaluza.jfrog.io", usr, password)
+  }.getOrElse(Credentials(Path.userHome / ".sbt" / ".credentials"))
 )

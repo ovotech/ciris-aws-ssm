@@ -8,7 +8,7 @@ sealed abstract class Param[F[_]] {
   def apply(key: String): ConfigValue[F, String]
 }
 
-private[ssm] final object Param {
+private[ssm] object Param {
   final def apply[F[_]](client: SsmClient): Param[F] =
     new Param[F] {
       override final def apply(key: String): ConfigValue[F, String] =

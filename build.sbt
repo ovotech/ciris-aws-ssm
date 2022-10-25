@@ -1,16 +1,20 @@
-val catsEffectVersion = "3.2.9"
 lazy val root = (project in file("."))
   .settings(publishOptions)
   .settings(
     name := "ciris-aws-ssm",
     organization := "com.ovoenergy",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-    scalaVersion := "3.1.0",
-    crossScalaVersions := Seq(scalaVersion.value, "2.13.1", "2.12.10"),
+    scalaVersion := "3.2.0",
+    crossScalaVersions := Seq(scalaVersion.value, "2.13.10", "2.12.10"),
+    scalacOptions := (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, 12)) => Seq("-Ypartial-unification")
+      case _             => Seq.empty
+    }),
     libraryDependencies ++= Seq(
-      "is.cir" %% "ciris" % "2.2.1",
-      "software.amazon.awssdk" % "ssm" % "2.16.82",
-      "org.typelevel" %% "cats-effect"        % catsEffectVersion
+      "is.cir" %% "ciris" % "2.4.0",
+      "software.amazon.awssdk" % "ssm" % "2.18.2",
+      "org.typelevel" %% "cats-effect" % "3.3.14",
+      "org.typelevel" %% "munit-cats-effect-3" % "1.0.7" % "test"
     ),
     scmInfo := Some(
       ScmInfo(

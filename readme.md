@@ -16,50 +16,72 @@ resolvers += "Kaluza artifactory" at "https://kaluza.jfrog.io/artifactory/maven"
 libraryDependencies += "com.ovoenergy" %% "ciris-aws-ssm" % "LATEST_VERSION"
 ```
 
-The library is published for Scala 2.12 and 2.13.
+The library is published against cats effect 3, for both Scala 2.12 and 2.13.
 
 ### Example
 
 ```scala
-import cats.effect.{Blocker, ExitCode, IO, IOApp}
+import cats.effect.{IO, IOApp}
 import cats.implicits._
-import ciris._
+import ciris.Secret
 import ciris.aws.ssm._
-import software.amazon.awssdk.regions.Region
 
-final case class Config(
-  username: String,
-  password: String,
-  port: Int,
-  apiKey: Option[String]
-)
+object Main extends IOApp.Simple {
 
-object Main extends IOApp {
-  def run(args: List[String]): IO[ExitCode] =
-    Blocker[IO].use { blocker =>
-      val config =
-        for {
-          region <- env("AWS_REGION").map(Region.of).default(Region.EU_WEST_1)
-          param <- params(blocker, region)
-          config <- (
-              param("password"),
-              param("port").as[Int],
-              param("api-key").option
-            ).parMapN { (password, port, apiKey) =>
-              Config(
-                username = "Dave",
-                password = password,
-                port = port,
-                apiKey = apiKey
-              )
-            }
-        } yield config
+  final case class Config(
+     username: String,
+     password: Secret[String],
+     port: Int,
+     apiKey: Option[String]
+  )
 
-      config.load[IO].as(ExitCode.Success)
-    }
+  def loadConfig: IO[Config] = 
+    params[IO].flatMap { param =>
+      (
+        param("/myapp/password").secret,
+        param("/myapp/port").as[Int],
+        param("/myapp/api-key").option
+        ).parMapN { (password, port, apiKey) =>
+        Config(username = "Dave", password = password, port = port, apiKey = apiKey)
+      }
+    }.load
+
+  override def run: IO[Unit] =
+    loadConfig.flatMap(cfg => IO.println(s"Config loaded: $cfg"))
+
 }
 ```
+The `params[F]` function will use the AWS SDK's synchronous [SsmClient](software.amazon.awssdk.services.ssm.SsmClient) under the hood.  
 
+If you wish to use the asynchronous SDK, switch out `params[F]` for `paramsAsync[F]`, e.g.
+
+```scala
+    paramsAsync[IO].flatMap { param => 
+```
+
+Both the `params[F]` and `paramsAsync[F]` use the default client configuration, but for both there are alternate
+functions for construction:
+
+```scala
+// use the default client, but with a region
+params[IO](Region.EU_WEST_1)
+paramsAsync[IO](Region.EU_WEST_1)
+
+// additionally configure a creds provider
+val customCreds = DefaultCredentialsProvider.builder().profileName("foo").build()
+params[IO](Region.EU_WEST_1, customCreds)
+   
+// custom client
+val client = SsmClient.builder().httpClientBuilder(myClient).build()
+params[IO](client)
+
+// async version
+val client = SsmAsyncClient.builder().region(Region.US_EAST_2).build()
+paramsAsync[IO](client)
+
+
+```
+ 
 ### Release
 
 To release a new version use the following commands.

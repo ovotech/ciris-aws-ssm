@@ -9,15 +9,12 @@ import software.amazon.awssdk.services.ssm.model.{
 }
 
 import java.util.concurrent.CompletableFuture
-import scala.collection.mutable
 
-case class SsmAsyncClientMock(initialValues: (String, String)*) extends SsmAsyncClient {
+case class SsmAsyncClientMock(mockParams: (String, String)*) extends SsmAsyncClient {
 
   def serviceName(): String = "mock-ssm"
 
   def close(): Unit = ()
-
-  private[this] val secrets = mutable.Map(initialValues: _*)
 
   override def getParameter(req: GetParameterRequest): CompletableFuture[GetParameterResponse] =
     CompletableFuture.completedFuture {
@@ -25,7 +22,7 @@ case class SsmAsyncClientMock(initialValues: (String, String)*) extends SsmAsync
         req.withDecryption,
         "the GetParameterRequest call from param() should always specify decryption"
       )
-      secrets.get(req.name) match {
+      mockParams.toMap.get(req.name) match {
         case None =>
           throw ParameterNotFoundException.builder
             .message(s"${getClass.getSimpleName} - no mock secret setup")

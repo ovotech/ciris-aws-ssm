@@ -18,7 +18,7 @@ libraryDependencies += "com.ovoenergy" %% "ciris-aws-ssm" % "LATEST_VERSION"
 
 The library is published against cats effect 3, for both Scala 2.12 and 2.13.
 
-### Example
+### Usage
 
 ```scala
 import cats.effect.{IO, IOApp}
@@ -51,37 +51,34 @@ object Main extends IOApp.Simple {
 
 }
 ```
-The `params[F]` function will use the AWS SDK's synchronous [SsmClient](software.amazon.awssdk.services.ssm.SsmClient) under the hood.  
+The `params[F]` function returns a ciris `ConfigValue` loader.  On invocation of the (flatMapped) `param(name)`
+function, this loader will make a `GetParameterRequest` to the underlying
+[SsmAsyncClient](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/ssm/SsmAsyncClient.html),
+(decrypting the value if encrypted).
 
-If you wish to use the asynchronous SDK, switch out `params[F]` for `paramsAsync[F]`, e.g.
 
-```scala
-    paramsAsync[IO].flatMap { param => 
-```
-
-Both the `params[F]` and `paramsAsync[F]` use the default client configuration, but for both there are alternate
+The `params[F]` function uses the AWS SDK's default `SsmAsyncClient` configuration, but there are alternate
 functions for construction:
 
 ```scala
+import ciris.aws.ssm._
+import cats.effect.IO
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.ssm.SsmAsyncClient
+
 // use the default client, but with a region
 params[IO](Region.EU_WEST_1)
-paramsAsync[IO](Region.EU_WEST_1)
 
-// additionally configure a creds provider
+// also define a custom creds provider
 val customCreds = DefaultCredentialsProvider.builder().profileName("foo").build()
 params[IO](Region.EU_WEST_1, customCreds)
-   
-// custom client
-val client = SsmClient.builder().httpClientBuilder(myClient).build()
+
+// for most flexibility, configure the entire client yourself
+val client = SsmAsyncClient.builder().httpClient(customClient).build()
 params[IO](client)
-
-// async version
-val client = SsmAsyncClient.builder().region(Region.US_EAST_2).build()
-paramsAsync[IO](client)
-
-
 ```
- 
+
 ### Release
 
 To release a new version use the following commands.

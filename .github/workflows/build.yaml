@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: olafurpg/setup-scala@v11
+      - name: Cache SBT
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache
+            ~/.sbt
+          key: sbt-${{ hashFiles('**/build.sbt') }}
+      - name: Run tests
+        run: sbt +clean +test +doc

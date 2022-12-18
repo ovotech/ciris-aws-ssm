@@ -12,7 +12,7 @@ lazy val root = (project in file("."))
     }),
     libraryDependencies ++= Seq(
       "is.cir" %% "ciris" % "2.3.3",
-      "software.amazon.awssdk" % "ssm" % "2.18.3",
+      "software.amazon.awssdk" % "ssm" % "2.18.41",
       "org.typelevel" %% "cats-effect" % "3.3.14",
       "org.typelevel" %% "munit-cats-effect-3" % "1.0.7" % "test"
     ),

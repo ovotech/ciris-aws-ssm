@@ -35,7 +35,7 @@ package object ssm {
     params(SsmAsyncClient.builder().region(region).credentialsProvider(credsProvider))
 
   private def params[F[_]: Async](builder: SsmAsyncClientBuilder): ConfigValue[F, Param[F]] =
-    ConfigValue.resource(Resource.fromAutoCloseable(Sync[F].delay(builder.build())).map(params))
+    ConfigValue.resource(Resource.fromAutoCloseable(Sync[F].delay(builder.build())).map(params[F]))
 
   /** An asynchronous loader for SSM parameters, using the provided `SsmAsyncClient`
     *

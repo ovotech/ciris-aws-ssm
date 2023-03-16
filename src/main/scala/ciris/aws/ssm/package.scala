@@ -2,7 +2,7 @@ package ciris.aws
 
 import cats.effect.{Async, Resource, Sync}
 import ciris.ConfigValue
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.ssm.{SsmAsyncClient, SsmAsyncClientBuilder}
 
@@ -30,7 +30,7 @@ package object ssm {
     */
   def params[F[_]: Async](
     region: Region,
-    credsProvider: DefaultCredentialsProvider
+    credsProvider: AwsCredentialsProvider
   ): ConfigValue[F, Param[F]] =
     params(SsmAsyncClient.builder().region(region).credentialsProvider(credsProvider))
 

@@ -23,7 +23,7 @@ package object ssm {
     */
   def params[F[_]: Async](
     region: Region,
-    credsProvider: DefaultCredentialsProvider = DefaultCredentialsProvider.create()
+    credsProvider: DefaultCredentialsProvider = DefaultCredentialsProvider.builder().build()
   ): ConfigValue[F, Param[F]] = params(
     SsmAsyncClient.builder().region(region).credentialsProvider(credsProvider).build()
   )

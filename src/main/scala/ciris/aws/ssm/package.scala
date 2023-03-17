@@ -1,39 +1,48 @@
 package ciris.aws
 
-import cats.effect.Async
-import cats.effect.kernel.{Resource, Sync}
+import cats.effect.{Async, Resource, Sync}
 import ciris.ConfigValue
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.ssm.SsmAsyncClient
+import software.amazon.awssdk.services.ssm.{SsmAsyncClient, SsmAsyncClientBuilder}
 
 package object ssm {
 
   /** An asynchronous loader for SSM parameters, using the default client config */
-  def params[F[_]: Async]: ConfigValue[F, Param[F]] = params(
-    SsmAsyncClient.builder().build()
-  )
+  def params[F[_]: Async]: ConfigValue[F, Param[F]] = params(SsmAsyncClient.builder())
 
-  /** An asynchronous loader for SSM parameters, using the default client config with some overrides
+  /** An asynchronous loader for SSM parameters, otherwise using the default client config with the
+    * given region
+    *
+    * @param region
+    *   The AWS Region
+    */
+  def params[F[_]: Async](region: Region): ConfigValue[F, Param[F]] =
+    params(SsmAsyncClient.builder().region(region))
+
+  /** An asynchronous loader for SSM parameters, using the default client config with the given
+    * region and credentials provider
     *
     * @param region
     *   The AWS Region
     * @param credsProvider
-    *   optional credentials provider to use (default is `DefaultCredentialsProvider`)
+    *   AWS credentials provider to use
     */
   def params[F[_]: Async](
     region: Region,
-    credsProvider: DefaultCredentialsProvider = DefaultCredentialsProvider.create()
-  ): ConfigValue[F, Param[F]] = params(
-    SsmAsyncClient.builder().region(region).credentialsProvider(credsProvider).build()
-  )
+    credsProvider: AwsCredentialsProvider
+  ): ConfigValue[F, Param[F]] =
+    params(SsmAsyncClient.builder().region(region).credentialsProvider(credsProvider))
 
-  /** An asynchronous loader for SSM parameters, using the provided `SsmClient` */
+  private def params[F[_]: Async](builder: SsmAsyncClientBuilder): ConfigValue[F, Param[F]] =
+    ConfigValue.resource(Resource.fromAutoCloseable(Sync[F].delay(builder.build())).map(params[F]))
+
+  /** An asynchronous loader for SSM parameters, using the provided `SsmAsyncClient`
+    *
+    * @param client
+    *   The SSM client to use. The caller remains responsible for managing its lifecycle.
+    */
   def params[F[_]: Async](client: SsmAsyncClient): ConfigValue[F, Param[F]] =
-    ConfigValue.resource {
-      Resource
-        .fromAutoCloseable[F, SsmAsyncClient](Sync[F].delay(client))
-        .map(client => ConfigValue.default(Param.fromAsync[F](client)))
-    }
+    ConfigValue.default(Param.fromAsync[F](client))
 
 }

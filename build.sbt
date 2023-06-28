@@ -4,16 +4,16 @@ lazy val root = (project in file("."))
     name := "ciris-aws-ssm",
     organization := "com.ovoenergy",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-    scalaVersion := "3.1.3",
-    crossScalaVersions := Seq(scalaVersion.value, "2.13.10", "2.12.10"),
+    scalaVersion := "3.2.2",
+    crossScalaVersions := Seq(scalaVersion.value, "2.13.11", "2.12.10"),
     scalacOptions := (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 12)) => Seq("-Ypartial-unification")
       case _             => Seq.empty
     }),
     libraryDependencies ++= Seq(
-      "is.cir" %% "ciris" % "2.3.3",
-      "software.amazon.awssdk" % "ssm" % "2.18.3",
-      "org.typelevel" %% "cats-effect" % "3.3.14",
+      "is.cir" %% "ciris" % "3.2.0",
+      "software.amazon.awssdk" % "ssm" % "2.20.93",
+      "org.typelevel" %% "cats-effect" % "3.5.1",
       "org.typelevel" %% "munit-cats-effect-3" % "1.0.7" % "test"
     ),
     scmInfo := Some(
